@@ -13,4 +13,10 @@ api.interceptors.response.use(
   }
 )
 
+export const publicApi = {
+  getCategoryTree: () => api.get('/public/categories/tree'),
+  getPublishedArticles: () => api.get('/public/articles'),
+  getCategories: () => api.get('/public/categories')
+}
+
 export default api
