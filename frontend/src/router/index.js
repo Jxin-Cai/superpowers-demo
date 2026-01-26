@@ -16,6 +16,18 @@ const router = createRouter({
       component: () => import('../public/views/ArticleDetail.vue')
     },
     {
+      path: '/search',
+      component: () => import('../public/views/SearchArticle.vue')
+    },
+    {
+      path: '/login',
+      component: () => import('../auth/Login.vue')
+    },
+    {
+      path: '/register',
+      component: () => import('../auth/Register.vue')
+    },
+    {
       path: '/admin',
       component: () => import('../admin/views/AdminLayout.vue'),
       children: [
@@ -46,6 +58,10 @@ const router = createRouter({
         {
           path: 'articles/:id/edit',
           component: () => import('../admin/views/ArticleForm.vue')
+        },
+        {
+          path: 'users',
+          component: () => import('../admin/views/UserList.vue')
         }
       ]
     }

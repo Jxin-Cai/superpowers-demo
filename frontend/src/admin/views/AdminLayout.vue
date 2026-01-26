@@ -19,6 +19,10 @@
           <el-icon><Folder /></el-icon>
           <span>分类管理</span>
         </el-menu-item>
+        <el-menu-item index="/admin/users">
+          <el-icon><User /></el-icon>
+          <span>用户管理</span>
+        </el-menu-item>
         <el-menu-item index="/">
           <el-icon><Back /></el-icon>
           <span>返回前台</span>
@@ -34,7 +38,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Document, Folder, Back } from '@element-plus/icons-vue'
+import { Document, Folder, Back, User } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const activeMenu = computed(() => route.path)

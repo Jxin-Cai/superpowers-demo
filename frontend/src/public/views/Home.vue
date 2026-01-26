@@ -5,10 +5,12 @@
         <h1 class="title">CMS 系统</h1>
         <nav class="nav">
           <router-link to="/" class="nav-link">首页</router-link>
+          <router-link to="/search" class="nav-link">搜索</router-link>
           <router-link v-for="cat in categories" :key="cat.id" :to="`/category/${cat.id}`" class="nav-link">
             {{ cat.name }}
           </router-link>
           <router-link to="/admin" class="nav-link admin">后台管理</router-link>
+          <UserMenu />
         </nav>
       </div>
     </header>
@@ -33,6 +35,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { articleApi } from '@/api/article'
 import { categoryApi } from '@/api/category'
+import UserMenu from '@/components/UserMenu.vue'
 
 const router = useRouter()
 const articles = ref([])

@@ -27,6 +27,13 @@
         />
       </el-form-item>
 
+      <el-form-item label="关键词">
+        <el-input
+          v-model="form.keywords"
+          placeholder="请输入关键词，用逗号分隔（如：Java,Spring,编程）"
+        />
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="save">保存</el-button>
         <el-button @click="$router.back()">取消</el-button>
@@ -53,7 +60,8 @@ const categories = ref([])
 const form = ref({
   title: '',
   content: '',
-  categoryId: null
+  categoryId: null,
+  keywords: ''
 })
 
 const loadCategories = async () => {
@@ -73,7 +81,8 @@ const load = async () => {
     form.value = {
       title: article.title,
       content: article.content,
-      categoryId: article.categoryId
+      categoryId: article.categoryId,
+      keywords: article.keywords || ''
     }
   } catch (e) {
     ElMessage.error('加载失败')
@@ -84,6 +93,12 @@ const save = async () => {
   if (!form.value.title || !form.value.content || !form.value.categoryId) {
     ElMessage.warning('请填写完整信息')
     return
+  }
+  const data = {
+    title: form.value.title,
+    content: form.value.content,
+    categoryId: form.value.categoryId,
+    keywords: form.value.keywords
   }
   try {
     if (isEdit.value) {
