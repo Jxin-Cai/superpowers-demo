@@ -17,5 +17,16 @@ public class CategoryTreeNode {
     private String name;
     private String description;
     private Integer sortOrder;
-    private List<CategoryTreeNode> children;
+    @Builder.Default
+    private List<CategoryTreeNode> children = new ArrayList<>();
+
+    public static CategoryTreeNode from(Long id, String name, String description, Integer sortOrder) {
+        return CategoryTreeNode.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .sortOrder(sortOrder)
+                .children(new ArrayList<>())
+                .build();
+    }
 }

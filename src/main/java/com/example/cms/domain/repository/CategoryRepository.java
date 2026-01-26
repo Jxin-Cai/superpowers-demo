@@ -11,4 +11,6 @@ public interface CategoryRepository {
     List<Category> findAll();
     void deleteById(Long id);
     boolean existsByName(String name);
+    List<Category> findByIds(List<Long> ids);
+    boolean existsByCategoryId(Long id);
 }
