@@ -45,7 +45,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import api from '../api'
+import api from '@/api'
 
 const router = useRouter()
 const keyword = ref('')

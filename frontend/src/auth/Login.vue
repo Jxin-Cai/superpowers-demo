@@ -27,9 +27,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '../composables/useAuth'
+import { useAuth } from '@/composables/useAuth'
 import { ElMessage } from 'element-plus'
-import api from '../api'
+import api from '@/api'
 
 const router = useRouter()
 const { login } = useAuth()
