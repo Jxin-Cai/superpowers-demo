@@ -43,6 +43,16 @@ public class CategoryEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public static CategoryEntity forUpdate(Long id, String name, String description, LocalDateTime createdAt) {
+        CategoryEntity entity = new CategoryEntity();
+        entity.id = id;
+        entity.name = name;
+        entity.description = description;
+        entity.createdAt = createdAt;
+        entity.updatedAt = LocalDateTime.now();
+        return entity;
+    }
+
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();

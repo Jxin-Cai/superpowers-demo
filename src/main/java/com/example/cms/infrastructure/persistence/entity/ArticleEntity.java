@@ -74,6 +74,22 @@ public class ArticleEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public static ArticleEntity forUpdate(Long id, String title, String content, String renderedContent,
+                                          String status, Long categoryId, LocalDateTime createdAt,
+                                          LocalDateTime publishedAt) {
+        ArticleEntity entity = new ArticleEntity();
+        entity.id = id;
+        entity.title = title;
+        entity.content = content;
+        entity.renderedContent = renderedContent;
+        entity.status = status;
+        entity.categoryId = categoryId;
+        entity.createdAt = createdAt;
+        entity.updatedAt = LocalDateTime.now();
+        entity.publishedAt = publishedAt;
+        return entity;
+    }
+
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
