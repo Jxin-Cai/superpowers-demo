@@ -1,0 +1,14 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Worktrees
+.worktrees/
+worktrees/
+
+# Build outputs
+target/
+dist/
+node_modules/
