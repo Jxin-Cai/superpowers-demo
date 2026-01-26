@@ -39,6 +39,34 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+// 前端构建任务
+task buildFrontend(type: Exec) {
+    workingDir file('frontend')
+    inputs.dir file('frontend/src')
+    outputs.dir file('frontend/dist')
+
+    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        commandLine 'npm', 'run', 'build'
+    } else {
+        commandLine 'sh', '-c', 'npm install && npm run build'
+    }
+}
+
+// 复制前端构建产物到 static 目录
+task copyFrontend(type: Copy) {
+    dependsOn buildFrontend
+    from file('frontend/dist')
+    into file('src/main/resources/static')
+}
+
+// 确保 processResources 在 copyFrontend 之后执行
+processResources.mustRunAfter copyFrontend
+
+// 确保 bootRun 前先构建前端
+bootRun.dependsOn copyFrontend
+// 确保 bootJar 前先构建前端
+bootJar.dependsOn copyFrontend
+
 tasks.named('test') {
     useJUnitPlatform()
 }
