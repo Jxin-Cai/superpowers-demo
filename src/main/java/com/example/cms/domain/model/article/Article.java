@@ -3,7 +3,7 @@ package com.example.cms.domain.model.article;
 import com.example.cms.domain.shared.Audit;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Value;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
@@ -14,9 +14,9 @@ public class Article {
     private String content;
     private RenderedContent renderedContent;
     private ArticleStatus status;
-    private final Long categoryId;
+    private Long categoryId;
     private LocalDateTime publishedAt;
-    private final Audit audit;
+    private Audit audit;
 
     private Article(Builder builder) {
         this.id = builder.id;
@@ -62,7 +62,7 @@ public class Article {
         this.audit.markModified();
     }
 
-    @Value
+    @Data
     public static class Builder {
         Long id;
         String title;
