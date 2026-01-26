@@ -15,6 +15,7 @@ public class Article {
     private ArticleStatus status;
     private Long categoryId;
     private LocalDateTime publishedAt;
+    private String keywords;
     private Audit audit;
 
     private Article(Builder builder) {
@@ -25,6 +26,7 @@ public class Article {
         this.status = builder.status;
         this.categoryId = builder.categoryId;
         this.publishedAt = builder.publishedAt;
+        this.keywords = builder.keywords;
         this.audit = builder.audit;
     }
 
@@ -69,6 +71,7 @@ public class Article {
         ArticleStatus status = ArticleStatus.DRAFT;
         Long categoryId;
         LocalDateTime publishedAt;
+        String keywords = "";
         Audit audit = Audit.create();
 
         public Builder id(Long id) {
@@ -103,6 +106,11 @@ public class Article {
 
         public Builder publishedAt(LocalDateTime publishedAt) {
             this.publishedAt = publishedAt;
+            return this;
+        }
+
+        public Builder keywords(String keywords) {
+            this.keywords = keywords != null ? keywords : "";
             return this;
         }
 

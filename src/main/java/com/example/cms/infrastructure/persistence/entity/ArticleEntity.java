@@ -43,6 +43,9 @@ public class ArticleEntity {
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
 
+    @Column(name = "keywords", length = 500)
+    private String keywords;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -50,13 +53,14 @@ public class ArticleEntity {
     private LocalDateTime updatedAt;
 
     public static ArticleEntity of(String title, String content, String renderedContent,
-                                    String status, Long categoryId) {
+                                    String status, Long categoryId, String keywords) {
         ArticleEntity entity = new ArticleEntity();
         entity.title = title;
         entity.content = content;
         entity.renderedContent = renderedContent;
         entity.status = status;
         entity.categoryId = categoryId;
+        entity.keywords = keywords;
         entity.createdAt = LocalDateTime.now();
         entity.updatedAt = LocalDateTime.now();
         return entity;
@@ -84,7 +88,7 @@ public class ArticleEntity {
 
     public static ArticleEntity forUpdate(Long id, String title, String content, String renderedContent,
                                           String status, Long categoryId, LocalDateTime createdAt,
-                                          LocalDateTime publishedAt) {
+                                          LocalDateTime publishedAt, String keywords) {
         ArticleEntity entity = new ArticleEntity();
         entity.id = id;
         entity.title = title;
@@ -92,6 +96,7 @@ public class ArticleEntity {
         entity.renderedContent = renderedContent;
         entity.status = status;
         entity.categoryId = categoryId;
+        entity.keywords = keywords;
         entity.createdAt = createdAt;
         entity.updatedAt = LocalDateTime.now();
         entity.publishedAt = publishedAt;

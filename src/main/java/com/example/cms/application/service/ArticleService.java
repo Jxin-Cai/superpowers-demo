@@ -7,6 +7,8 @@ import com.example.cms.domain.repository.ArticleRepository;
 import com.example.cms.domain.repository.CategoryRepository;
 import com.example.cms.domain.service.MarkdownRenderer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,7 @@ public class ArticleService {
     private final MarkdownRenderer markdownRenderer;
 
     @Transactional
-    public Article create(String title, String content, Long categoryId) {
+    public Article create(String title, String content, Long categoryId, String keywords) {
         validateCategoryExists(categoryId);
 
         RenderedContent renderedContent = markdownRenderer.render(content);
@@ -32,6 +34,7 @@ public class ArticleService {
                 .content(content)
                 .renderedContent(renderedContent)
                 .categoryId(categoryId)
+                .keywords(keywords)
                 .build();
         return articleRepository.save(article);
     }
@@ -85,6 +88,10 @@ public class ArticleService {
 
     public List<Article> findByCategory(Long categoryId) {
         return articleRepository.findByCategoryIdAndStatus(categoryId, ArticleStatus.PUBLISHED);
+    }
+
+    public Page<Article> search(String keyword, Long categoryId, Pageable pageable) {
+        return articleRepository.searchByKeyword(keyword, categoryId, pageable);
     }
 
     private void validateCategoryExists(Long categoryId) {
