@@ -3,7 +3,6 @@ package com.example.cms.domain.model.article;
 import com.example.cms.domain.shared.Audit;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +35,7 @@ public class Article {
     public void updateContent(String content, RenderedContent renderedContent) {
         this.content = content;
         this.renderedContent = renderedContent;
-        this.audit.markModified();
+        this.audit = this.audit.markModified();
     }
 
     public void publish() {
@@ -45,7 +44,7 @@ public class Article {
         }
         this.status = ArticleStatus.PUBLISHED;
         this.publishedAt = LocalDateTime.now();
-        this.audit.markModified();
+        this.audit = this.audit.markModified();
     }
 
     public void unpublish() {
@@ -54,15 +53,14 @@ public class Article {
         }
         this.status = ArticleStatus.DRAFT;
         this.publishedAt = null;
-        this.audit.markModified();
+        this.audit = this.audit.markModified();
     }
 
     public void changeCategory(Long categoryId) {
         this.categoryId = categoryId;
-        this.audit.markModified();
+        this.audit = this.audit.markModified();
     }
 
-    @Data
     public static class Builder {
         Long id;
         String title;
