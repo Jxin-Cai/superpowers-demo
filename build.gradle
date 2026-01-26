@@ -32,8 +32,8 @@ dependencies {
     implementation 'com.vladsch.flexmark:flexmark-all:0.64.8'
 
     // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
