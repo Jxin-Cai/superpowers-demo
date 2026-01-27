@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import CategoryTree from '@/admin/components/CategoryTree.vue'
 
 const treeRef = ref()
@@ -24,6 +24,10 @@ const handleCreate = () => {
 const handleRefresh = () => {
   // 刷新后处理，如需要可以添加额外逻辑
 }
+
+onMounted(() => {
+  treeRef.value?.load()
+})
 </script>
 
 <style scoped>

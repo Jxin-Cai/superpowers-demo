@@ -40,7 +40,7 @@ const categories = ref([])
 const loadArticles = async () => {
   try {
     const res = await publicApi.getPublishedArticles()
-    articles.value = res.data
+    articles.value = res
   } catch (e) {
     console.error('加载文章失败', e)
   }
@@ -49,7 +49,7 @@ const loadArticles = async () => {
 const loadCategories = async () => {
   try {
     const res = await publicApi.getCategories()
-    categories.value = res.data
+    categories.value = res
   } catch (e) {
     console.error('加载分类失败', e)
   }

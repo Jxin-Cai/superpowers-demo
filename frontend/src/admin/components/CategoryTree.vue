@@ -107,6 +107,10 @@ const form = ref({
 
 // 用于选择器的树形数据（排除当前编辑节点及其子节点）
 const treeDataForSelect = computed(() => {
+  if (!treeData.value || treeData.value.length === 0) {
+    return []
+  }
+
   const excludeIds = new Set()
 
   const collectChildren = (node) => {
@@ -135,13 +139,28 @@ const treeDataForSelect = computed(() => {
   const filterTree = (nodes) => {
     return nodes
       .filter(node => !excludeIds.has(node.id))
-      .map(node => ({
-        ...node,
-        children: node.children ? filterTree(node.children) : undefined
-      }))
+      .map(node => {
+        const filtered = { ...node }
+        if (node.children && node.children.length > 0) {
+          const filteredChildren = filterTree(node.children)
+          if (filteredChildren.length > 0) {
+            filtered.children = filteredChildren
+          } else {
+            delete filtered.children
+          }
+        } else {
+          delete filtered.children
+        }
+        return filtered
+      })
   }
 
-  return filterTree(JSON.parse(JSON.stringify(treeData.value)))
+  try {
+    return filterTree(JSON.parse(JSON.stringify(treeData.value)))
+  } catch (e) {
+    console.error('处理树形数据失败:', e)
+    return []
+  }
 })
 
 // 加载树形数据
@@ -149,7 +168,8 @@ const load = async () => {
   try {
     const res = await categoryApi.getTree()
     // 后端已经返回嵌套的树形结构 { tree: [...] }
-    treeData.value = cleanEmptyChildren(res.data.tree || [])
+    // axios 拦截器已返回 response.data.data，所以 res 直接是 { tree: [...] }
+    treeData.value = cleanEmptyChildren(res.tree || [])
   } catch (e) {
     console.error('加载分类树失败:', e)
     ElMessage.error('加载分类树失败')
@@ -195,11 +215,22 @@ const handleDrop = async (draggingNode, dropNode, dropType) => {
     } else {
       // 同级排序：调用排序接口
       const siblings = dropNode.parent.childNodes
-      const orderData = siblings.map((node, index) => ({
-        id: node.data.id,
-        sortOrder: index
-      }))
-      await categoryApi.reorder(orderData)
+      
+      // 构建符合后端 ReorderRequest 格式的数据
+      const parentNode = dropNode.parent
+      const parentId = parentNode.level === 0 ? null : parentNode.data.id
+      
+      const reorderRequest = {
+        parentType: 'CATEGORY',  // ResourceType enum
+        parentId: parentId,      // 父节点ID，根节点为null
+        items: siblings.map((node, index) => ({
+          resourceType: 'CATEGORY',
+          resourceId: node.data.id,
+          sortOrder: index
+        }))
+      }
+      
+      await categoryApi.reorder(reorderRequest)
       ElMessage.success('排序成功')
     }
     await load()

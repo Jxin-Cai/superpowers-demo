@@ -11,5 +11,5 @@ export const categoryApi = {
   update: (id, data) => api.put(`/admin/categories/${id}`, data),
   delete: (id, cascade = false) => api.delete(`/admin/categories/${id}`, { params: { cascade } }),
   moveToCategory: (id, newParentId) => api.put(`/admin/categories/${id}/move`, { newParentId }),
-  reorder: (data) => api.put('/admin/categories/reorder', data)
+  reorder: (request) => api.put('/admin/sort/reorder', request)
 }

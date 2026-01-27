@@ -48,7 +48,7 @@ const rootCategories = computed(() => {
 const loadTree = async () => {
   try {
     const res = await publicApi.getCategoryTree()
-    treeData.value = res.data.tree || []
+    treeData.value = res.tree || []
   } catch (e) {
     console.error('加载导航失败', e)
   }
@@ -65,6 +65,10 @@ const hideDropdown = () => {
 const goToCategory = (id) => {
   router.push({ name: 'CategoryArticleList', params: { id } })
   activeDropdown.value = null
+}
+
+const goToAdmin = () => {
+  router.push('/admin')
 }
 
 onMounted(loadTree)

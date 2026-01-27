@@ -8,14 +8,15 @@
       </el-form-item>
 
       <el-form-item label="分类">
-        <el-select v-model="form.categoryId" placeholder="请选择分类" style="width: 100%">
-          <el-option
-            v-for="cat in categories"
-            :key="cat.id"
-            :label="cat.name"
-            :value="cat.id"
-          />
-        </el-select>
+        <el-tree-select
+          v-model="form.categoryId"
+          :data="categoryTree"
+          :props="{ label: 'name', value: 'id', children: 'children' }"
+          placeholder="请选择分类"
+          style="width: 100%"
+          check-strictly
+          :render-after-expand="false"
+        />
       </el-form-item>
 
       <el-form-item label="内容">
@@ -59,6 +60,7 @@ const form = ref({
 })
 
 const categories = ref([])
+const categoryTree = ref([])
 
 const toolbars = [
   'bold', 'underline', 'italic', 'strikeThrough',
@@ -88,8 +90,13 @@ const fileToBase64 = (file) => {
 
 const loadCategories = async () => {
   try {
-    const res = await categoryApi.adminGetAll()
-    categories.value = res.data
+    // 加载所有分类（用于显示名称等）
+    const allRes = await categoryApi.adminGetAll()
+    categories.value = allRes
+    
+    // 加载树形结构（用于选择器）
+    const treeRes = await categoryApi.getTree()
+    categoryTree.value = treeRes.tree || []
   } catch (e) {
     ElMessage.error('加载分类失败')
   }
@@ -99,7 +106,7 @@ const load = async () => {
   if (!isEdit.value) return
   try {
     const res = await articleApi.adminGetAll()
-    const article = res.data.find(a => a.id === Number(id.value))
+    const article = res.find(a => a.id === Number(id.value))
     if (article) {
       form.value = {
         title: article.title,
@@ -129,12 +136,19 @@ const save = async () => {
 
 const publish = async () => {
   try {
-    const data = { ...form.value, status: 'PUBLISHED' }
+    let articleId = id.value
+    
     if (isEdit.value) {
-      await articleApi.update(id.value, data)
+      // 编辑模式：先保存再发布
+      await articleApi.update(articleId, form.value)
+      await articleApi.publish(articleId)
     } else {
-      await articleApi.create(data)
+      // 新建模式：先创建再发布
+      const created = await articleApi.create(form.value)
+      articleId = created.id
+      await articleApi.publish(articleId)
     }
+    
     ElMessage.success('发布成功')
     router.push('/admin/articles')
   } catch (e) {

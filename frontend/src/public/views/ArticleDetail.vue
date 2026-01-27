@@ -1,17 +1,6 @@
 <template>
   <div class="article-page">
-    <header class="header">
-      <div class="header-content">
-        <h1 class="title">CMS 系统</h1>
-        <nav class="nav">
-          <router-link to="/" class="nav-link">首页</router-link>
-          <router-link v-for="cat in categories" :key="cat.id" :to="`/category/${cat.id}`" class="nav-link">
-            {{ cat.name }}
-          </router-link>
-          <router-link to="/admin" class="nav-link admin">后台管理</router-link>
-        </nav>
-      </div>
-    </header>
+    <TopCategoryNav />
 
     <main class="main">
       <div v-if="article" class="article">
@@ -31,30 +20,20 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { articleApi } from '@/api/article'
-import { categoryApi } from '@/api/category'
+import TopCategoryNav from '@/public/components/TopCategoryNav.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const articleId = computed(() => route.params.id)
 const article = ref(null)
-const categories = ref([])
 
 const loadArticle = async () => {
   try {
     const res = await articleApi.getById(articleId.value)
-    article.value = res.data
+    article.value = res
   } catch (e) {
     router.push('/')
-  }
-}
-
-const loadCategories = async () => {
-  try {
-    const res = await categoryApi.getAll()
-    categories.value = res.data
-  } catch (e) {
-    console.error(e)
   }
 }
 
@@ -63,7 +42,6 @@ const formatDate = (date) => {
 }
 
 onMounted(() => {
-  loadCategories()
   loadArticle()
 })
 </script>
@@ -72,46 +50,6 @@ onMounted(() => {
 .article-page {
   min-height: 100vh;
   background-color: #f5f5f5;
-}
-
-.header {
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.title {
-  margin: 0;
-  font-size: 24px;
-}
-
-.nav {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #333;
-  padding: 8px 16px;
-  border-radius: 4px;
-}
-
-.nav-link:hover,
-.nav-link.router-link-active {
-  background-color: #f0f0f0;
-}
-
-.nav-link.admin {
-  color: #409eff;
 }
 
 .main {

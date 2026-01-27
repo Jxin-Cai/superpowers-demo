@@ -1,17 +1,6 @@
 <template>
   <div class="category-page">
-    <header class="header">
-      <div class="header-content">
-        <h1 class="title">CMS 系统</h1>
-        <nav class="nav">
-          <router-link to="/" class="nav-link">首页</router-link>
-          <router-link v-for="cat in categories" :key="cat.id" :to="`/category/${cat.id}`" class="nav-link">
-            {{ cat.name }}
-          </router-link>
-          <router-link to="/admin" class="nav-link admin">后台管理</router-link>
-        </nav>
-      </div>
-    </header>
+    <TopCategoryNav />
 
     <main class="main">
       <h2 class="category-title">{{ category?.name || '加载中...' }}</h2>
@@ -29,33 +18,32 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { articleApi } from '@/api/article'
 import { categoryApi } from '@/api/category'
+import TopCategoryNav from '@/public/components/TopCategoryNav.vue'
 
 const route = useRoute()
 const router = useRouter()
 
 const categoryId = computed(() => route.params.id)
 const articles = ref([])
-const categories = ref([])
 const category = ref(null)
 
 const loadArticles = async () => {
   try {
     const res = await articleApi.getPublished(categoryId.value)
-    articles.value = res.data
+    articles.value = res
   } catch (e) {
     console.error(e)
   }
 }
 
-const loadCategories = async () => {
+const loadCategory = async () => {
   try {
     const res = await categoryApi.getAll()
-    categories.value = res.data
-    category.value = res.data.find(c => c.id === Number(categoryId.value))
+    category.value = res.find(c => c.id === Number(categoryId.value))
   } catch (e) {
     console.error(e)
   }
@@ -69,8 +57,14 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString()
 }
 
+// 监听路由参数变化，重新加载数据
+watch(categoryId, () => {
+  loadCategory()
+  loadArticles()
+})
+
 onMounted(() => {
-  loadCategories()
+  loadCategory()
   loadArticles()
 })
 </script>
@@ -79,46 +73,6 @@ onMounted(() => {
 .category-page {
   min-height: 100vh;
   background-color: #f5f5f5;
-}
-
-.header {
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.title {
-  margin: 0;
-  font-size: 24px;
-}
-
-.nav {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #333;
-  padding: 8px 16px;
-  border-radius: 4px;
-}
-
-.nav-link:hover,
-.nav-link.router-link-active {
-  background-color: #f0f0f0;
-}
-
-.nav-link.admin {
-  color: #409eff;
 }
 
 .main {

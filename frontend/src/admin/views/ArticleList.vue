@@ -61,7 +61,7 @@ const articles = ref([])
 const load = async () => {
   try {
     const res = await articleApi.adminGetAll()
-    articles.value = res.data
+    articles.value = res
   } catch (e) {
     ElMessage.error('加载失败')
   }
