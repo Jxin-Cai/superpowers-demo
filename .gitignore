@@ -8,7 +8,19 @@
 .worktrees/
 worktrees/
 
-# Build outputs
+# Java/Gradle build outputs
+.gradle/
+build/
+bin/
 target/
-dist/
+*.class
+
+# Frontend build outputs
+frontend/dist/
+frontend/node_modules/
 node_modules/
+src/main/resources/static/
+
+# Package lock files
+package-lock.json
+frontend/package-lock.json
