@@ -51,17 +51,20 @@ async function handleLogin() {
   loading.value = true
 
   try {
-    await api.post('/auth/login', {
+    const user = await api.post('/auth/login', {
       username: form.value.username,
       password: form.value.password
     })
 
-    login(form.value.username, form.value.password)
+    // 登录成功，保存凭证（包含角色）
+    login(form.value.username, form.value.password, user.role)
 
     ElMessage.success('登录成功')
     router.push('/')
   } catch (error) {
-    ElMessage.error(error.response?.data?.message || '登录失败')
+    // 处理业务错误和网络错误
+    const message = error.message || error.response?.data?.message || '登录失败'
+    ElMessage.error(message)
   } finally {
     loading.value = false
   }

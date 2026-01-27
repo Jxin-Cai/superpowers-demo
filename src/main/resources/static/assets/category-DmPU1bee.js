@@ -1,1 +1,0 @@
-import{a as t}from"./index-DQ-5gSyr.js";const o={getAll:()=>t.get("/public/categories"),adminGetAll:()=>t.get("/admin/categories"),create:e=>t.post("/admin/categories",e),update:(e,a)=>t.put(`/admin/categories/${e}`,a),delete:e=>t.delete(`/admin/categories/${e}`)};export{o as c};

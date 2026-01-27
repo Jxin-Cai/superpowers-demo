@@ -71,4 +71,24 @@ const router = createRouter({
   ]
 })
 
+// 路由守卫：检查登录状态
+router.beforeEach((to, from, next) => {
+  const authData = JSON.parse(localStorage.getItem('cms_auth') || 'null')
+  const isLoggedIn = !!authData
+  
+  // 如果已登录但访问登录页，重定向到首页
+  if (isLoggedIn && (to.path === '/login' || to.path === '/register')) {
+    next('/')
+    return
+  }
+  
+  // 如果访问管理页面但未登录，重定向到登录页
+  if (to.path.startsWith('/admin') && !isLoggedIn) {
+    next('/login')
+    return
+  }
+  
+  next()
+})
+
 export default router

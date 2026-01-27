@@ -80,13 +80,14 @@ async function handleRegister() {
   loading.value = true
 
   try {
-    await api.post('/auth/register', {
+    const user = await api.post('/auth/register', {
       username: form.value.username,
       password: form.value.password,
       email: form.value.email || null
     })
 
-    login(form.value.username, form.value.password)
+    // 注册成功，自动登录（默认为普通用户）
+    login(form.value.username, form.value.password, user.role || 'USER')
 
     ElMessage.success('注册成功')
     router.push('/')

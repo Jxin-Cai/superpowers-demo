@@ -59,8 +59,8 @@ const total = ref(0)
 
 async function fetchCategories() {
   try {
-    const response = await api.get('/public/categories')
-    categories.value = response.data.data
+    const data = await api.get('/public/categories')
+    categories.value = data
   } catch (error) {
     ElMessage.error('获取分类失败')
   }
@@ -75,9 +75,9 @@ async function handleSearch() {
       page: page.value - 1,
       size: size.value
     }
-    const response = await api.get('/public/articles/search', { params })
-    articles.value = response.data.data.content || []
-    total.value = response.data.data.totalElements || 0
+    const data = await api.get('/public/articles/search', { params })
+    articles.value = data?.content || []
+    total.value = data?.totalElements || 0
   } catch (error) {
     ElMessage.error('搜索失败')
   } finally {

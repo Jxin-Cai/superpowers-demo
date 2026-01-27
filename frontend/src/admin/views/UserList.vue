@@ -82,8 +82,8 @@ const rules = {
 
 async function fetchUsers() {
   try {
-    const response = await api.get('/admin/users')
-    users.value = response.data
+    const data = await api.get('/admin/users')
+    users.value = data || []
   } catch (error) {
     ElMessage.error('获取用户列表失败')
   }

@@ -24,9 +24,20 @@
             </div>
           </div>
         </div>
-        <div class="nav-item admin-link" @click="goToAdmin">
+        <div v-if="isAdmin" class="nav-item admin-link" @click="goToAdmin">
           <span>后台管理</span>
         </div>
+      </div>
+      <div class="nav-right">
+        <el-button 
+          type="text" 
+          class="search-btn"
+          @click="goToSearch"
+        >
+          <el-icon :size="20"><Search /></el-icon>
+          <span class="search-text">搜索</span>
+        </el-button>
+        <UserMenu />
       </div>
     </div>
   </nav>
@@ -35,11 +46,15 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { Search } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
+import { useAuth } from '@/composables/useAuth'
+import UserMenu from '@/components/UserMenu.vue'
 
 const router = useRouter()
 const treeData = ref([])
 const activeDropdown = ref(null)
+const { isAdmin } = useAuth()
 
 const rootCategories = computed(() => {
   return treeData.value
@@ -71,6 +86,10 @@ const goToAdmin = () => {
   router.push('/admin')
 }
 
+const goToSearch = () => {
+  router.push('/search')
+}
+
 onMounted(loadTree)
 </script>
 
@@ -88,6 +107,7 @@ onMounted(loadTree)
   margin: 0 auto;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 60px;
   padding: 0 20px;
 }
@@ -102,6 +122,31 @@ onMounted(loadTree)
 .nav-menu {
   display: flex;
   gap: 8px;
+  flex: 1;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 20px;
+}
+
+.search-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px !important;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+  background-color: #f5f7fa !important;
+}
+
+.search-text {
+  font-size: 14px;
 }
 
 .nav-item {

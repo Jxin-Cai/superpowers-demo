@@ -13,10 +13,16 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        if (request.getRequestURI().startsWith("/api/")) {
+        String requestUri = request.getRequestURI();
+        
+        // API请求返回401错误
+        if (requestUri.startsWith("/api/")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-        } else {
-            response.sendRedirect("/login");
+            return;
         }
+        
+        // 对于前端路由和静态资源，不拦截（已经在SecurityConfig中配置了permitAll）
+        // 如果走到这里说明是需要认证的路径，返回401让前端处理
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 }

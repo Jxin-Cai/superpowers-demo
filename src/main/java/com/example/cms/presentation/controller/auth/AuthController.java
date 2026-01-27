@@ -19,10 +19,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ApiResponse<UserResponse> login(@Valid @RequestBody LoginRequest request) {
+        // 验证用户名和密码
+        if (!userService.verifyPassword(request.getUsername(), request.getPassword())) {
+            return ApiResponse.error("用户名或密码错误");
+        }
+        
+        // 验证用户状态
         return userService.findByUsername(request.getUsername())
                 .filter(User::isActive)
                 .map(user -> ApiResponse.success(UserResponse.from(user)))
-                .orElse(ApiResponse.error("用户名或密码错误"));
+                .orElse(ApiResponse.error("用户已被禁用"));
     }
 
     @PostMapping("/register")
