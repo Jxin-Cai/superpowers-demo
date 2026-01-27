@@ -24,6 +24,9 @@
             </div>
           </div>
         </div>
+        <div class="nav-item admin-link" @click="goToAdmin">
+          <span>后台管理</span>
+        </div>
       </div>
     </div>
   </nav>
@@ -62,6 +65,10 @@ const hideDropdown = () => {
 const goToCategory = (id) => {
   router.push({ name: 'CategoryArticleList', params: { id } })
   activeDropdown.value = null
+}
+
+const goToAdmin = () => {
+  router.push('/admin')
 }
 
 onMounted(loadTree)
@@ -137,5 +144,14 @@ onMounted(loadTree)
 
 .dropdown-item:hover {
   background: #f5f7fa;
+}
+
+.admin-link {
+  margin-left: auto;
+  color: #409eff;
+}
+
+.admin-link:hover {
+  background: #ecf5ff;
 }
 </style>
