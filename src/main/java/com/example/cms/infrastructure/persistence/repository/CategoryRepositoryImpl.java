@@ -44,6 +44,19 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         return springDataRepository.existsByName(name);
     }
 
+    @Override
+    public List<Category> findByIds(List<Long> ids) {
+        return springDataRepository.findAllById(ids)
+                .stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    public boolean existsByCategoryId(Long id) {
+        return springDataRepository.existsById(id);
+    }
+
     private Category toDomain(CategoryEntity entity) {
         return Category.builder()
                 .id(entity.getId())

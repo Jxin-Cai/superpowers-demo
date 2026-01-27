@@ -6,11 +6,17 @@ const api = axios.create({
 })
 
 api.interceptors.response.use(
-  response => response.data,
+  response => response.data.data,
   error => {
     console.error('API Error:', error)
     return Promise.reject(error)
   }
 )
+
+export const publicApi = {
+  getCategoryTree: () => api.get('/public/categories/tree'),
+  getPublishedArticles: () => api.get('/public/articles'),
+  getCategories: () => api.get('/public/categories')
+}
 
 export default api

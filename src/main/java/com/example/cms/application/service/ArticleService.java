@@ -3,6 +3,8 @@ package com.example.cms.application.service;
 import com.example.cms.domain.model.article.Article;
 import com.example.cms.domain.model.article.ArticleStatus;
 import com.example.cms.domain.model.article.RenderedContent;
+import com.example.cms.domain.model.sortorder.ResourceType;
+import com.example.cms.domain.model.sortorder.SortOrder;
 import com.example.cms.domain.repository.ArticleRepository;
 import com.example.cms.domain.repository.CategoryRepository;
 import com.example.cms.domain.service.MarkdownRenderer;
@@ -20,6 +22,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;
     private final MarkdownRenderer markdownRenderer;
+    private final SortOrderService sortOrderService;
 
     @Transactional
     public Article create(String title, String content, Long categoryId) {
@@ -90,6 +93,35 @@ public class ArticleService {
     private void validateCategoryExists(Long categoryId) {
         if (!categoryRepository.findById(categoryId).isPresent()) {
             throw new IllegalArgumentException("分类不存在: " + categoryId);
+        }
+    }
+
+    @Transactional
+    public void changeCategory(Long articleId, Long newCategoryId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new IllegalArgumentException("文章不存在: " + articleId));
+        categoryRepository.findById(newCategoryId)
+                .orElseThrow(() -> new IllegalArgumentException("目标分类不存在: " + newCategoryId));
+
+        SortOrder currentSort = sortOrderService.getArticleSortOrder(articleId);
+        int newSortOrder = 0;
+
+        if (currentSort != null && currentSort.getParentId().equals(newCategoryId)) {
+            return;
+        }
+
+        List<SortOrder> siblings = sortOrderService.getChildrenByParent(
+                ResourceType.CATEGORY, newCategoryId
+        );
+        newSortOrder = siblings.size();
+
+        article.setCategoryId(newCategoryId);
+        articleRepository.save(article);
+
+        if (currentSort != null) {
+            sortOrderService.moveArticleToCategory(articleId, newCategoryId, newSortOrder);
+        } else {
+            sortOrderService.initializeArticleSortOrder(articleId, newCategoryId, newSortOrder);
         }
     }
 }

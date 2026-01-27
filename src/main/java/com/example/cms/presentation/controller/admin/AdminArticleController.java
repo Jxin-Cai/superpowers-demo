@@ -7,6 +7,7 @@ import com.example.cms.domain.model.category.Category;
 import com.example.cms.presentation.dto.ApiResponse;
 import com.example.cms.presentation.dto.ArticleRequest;
 import com.example.cms.presentation.dto.ArticleResponse;
+import com.example.cms.presentation.dto.ChangeCategoryRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,6 +73,15 @@ public class AdminArticleController {
     public ApiResponse<ArticleResponse> unpublish(@PathVariable Long id) {
         Article article = articleService.unpublish(id);
         return ApiResponse.success(toResponse(article));
+    }
+
+    @PutMapping("/{id}/category")
+    public ApiResponse<Void> changeCategory(
+            @PathVariable Long id,
+            @RequestBody ChangeCategoryRequest request
+    ) {
+        articleService.changeCategory(id, request.getCategoryId());
+        return ApiResponse.success(null);
     }
 
     private ArticleResponse toResponse(Article article) {

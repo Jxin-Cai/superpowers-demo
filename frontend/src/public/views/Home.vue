@@ -1,38 +1,37 @@
 <template>
-  <div class="home">
-    <header class="header">
-      <div class="header-content">
-        <h1 class="title">CMS 系统</h1>
-        <nav class="nav">
-          <router-link to="/" class="nav-link">首页</router-link>
-          <router-link v-for="cat in categories" :key="cat.id" :to="`/category/${cat.id}`" class="nav-link">
-            {{ cat.name }}
-          </router-link>
-          <router-link to="/admin" class="nav-link admin">后台管理</router-link>
-        </nav>
-      </div>
-    </header>
-
-    <main class="main">
-      <div class="article-list">
-        <div v-for="article in articles" :key="article.id" class="article-card" @click="viewArticle(article.id)">
-          <h3 class="article-title">{{ article.title }}</h3>
-          <div class="article-meta">
-            <span class="category">{{ article.categoryName }}</span>
-            <span class="time">{{ formatDate(article.publishedAt) }}</span>
+  <div class="home-page">
+    <TopCategoryNav />
+    <div class="content-container">
+      <CategorySidebar />
+      <div class="main-content">
+        <h1>最新文章</h1>
+        <div class="article-list">
+          <div
+            v-for="article in articles"
+            :key="article.id"
+            class="article-item"
+            @click="viewArticle(article.id)"
+          >
+            <h3>{{ article.title }}</h3>
+            <p class="article-meta">
+              <span>{{ getCategoryName(article.categoryId) }}</span>
+              <span>{{ formatDate(article.publishedAt) }}</span>
+            </p>
+            <p class="article-excerpt">{{ getExcerpt(article.renderedContent) }}</p>
           </div>
-          <div class="article-preview">{{ article.renderedContent?.slice(0, 200) }}...</div>
         </div>
+        <el-empty v-if="articles.length === 0" description="暂无文章" />
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { articleApi } from '@/api/article'
-import { categoryApi } from '@/api/category'
+import TopCategoryNav from '@/public/components/TopCategoryNav.vue'
+import CategorySidebar from '@/public/components/CategorySidebar.vue'
+import { publicApi } from '@/api'
 
 const router = useRouter()
 const articles = ref([])
@@ -40,28 +39,40 @@ const categories = ref([])
 
 const loadArticles = async () => {
   try {
-    const res = await articleApi.getPublished()
+    const res = await publicApi.getPublishedArticles()
     articles.value = res.data
   } catch (e) {
-    console.error(e)
+    console.error('加载文章失败', e)
   }
 }
 
 const loadCategories = async () => {
   try {
-    const res = await categoryApi.getAll()
+    const res = await publicApi.getCategories()
     categories.value = res.data
   } catch (e) {
-    console.error(e)
+    console.error('加载分类失败', e)
   }
 }
 
-const viewArticle = (id) => {
-  router.push(`/article/${id}`)
+const getCategoryName = (categoryId) => {
+  const cat = categories.value.find(c => c.id === categoryId)
+  return cat?.name || '未知'
 }
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString()
+const formatDate = (dateStr) => {
+  if (!dateStr) return ''
+  return new Date(dateStr).toLocaleDateString('zh-CN')
+}
+
+const getExcerpt = (html) => {
+  if (!html) return ''
+  const text = html.replace(/<[^>]+>/g, '')
+  return text.length > 100 ? text.substring(0, 100) + '...' : text
+}
+
+const viewArticle = (id) => {
+  router.push({ name: 'ArticleDetail', params: { id } })
 }
 
 onMounted(() => {
@@ -71,86 +82,59 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.home {
+.home-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: #f5f7fa;
 }
 
-.header {
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.header-content {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.title {
-  margin: 0;
-  font-size: 24px;
-}
-
-.nav {
+.content-container {
+  max-width: 1200px;
+  margin: 20px auto;
   display: flex;
   gap: 20px;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #333;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.nav-link:hover,
-.nav-link.router-link-active {
-  background-color: #f0f0f0;
-}
-
-.nav-link.admin {
-  color: #409eff;
-}
-
-.main {
-  max-width: 800px;
-  margin: 40px auto;
   padding: 0 20px;
 }
 
-.article-card {
-  background-color: #fff;
-  padding: 24px;
-  margin-bottom: 16px;
-  border-radius: 8px;
+.main-content {
+  flex: 1;
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+}
+
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.article-item {
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 4px;
   cursor: pointer;
-  transition: box-shadow 0.3s;
+  transition: all 0.2s;
 }
 
-.article-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.article-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #409eff;
 }
 
-.article-title {
-  margin: 0 0 12px;
-  font-size: 20px;
+.article-item h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
 }
 
 .article-meta {
-  display: flex;
-  gap: 16px;
   color: #999;
   font-size: 14px;
-  margin-bottom: 12px;
+  display: flex;
+  gap: 16px;
 }
 
-.article-preview {
+.article-excerpt {
   color: #666;
-  line-height: 1.6;
+  margin: 8px 0 0;
 }
 </style>

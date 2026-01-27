@@ -13,6 +13,7 @@ public class Article {
     private String content;
     private RenderedContent renderedContent;
     private ArticleStatus status;
+    @Getter(AccessLevel.NONE)
     private Long categoryId;
     private LocalDateTime publishedAt;
     private Audit audit;
@@ -57,6 +58,15 @@ public class Article {
     }
 
     public void changeCategory(Long categoryId) {
+        this.categoryId = categoryId;
+        this.audit = this.audit.markModified();
+    }
+
+    public Long getCategoryId() {
+        return this.categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
         this.audit = this.audit.markModified();
     }
