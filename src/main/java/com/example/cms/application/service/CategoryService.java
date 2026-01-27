@@ -24,14 +24,32 @@ public class CategoryService {
 
     @Transactional
     public Category create(String name, String description) {
+        return create(name, description, null, 0);
+    }
+
+    @Transactional
+    public Category create(String name, String description, Long parentId, int sortOrder) {
         if (categoryRepository.existsByName(name)) {
             throw new IllegalArgumentException("分类名称已存在: " + name);
         }
+
+        // 验证父分类存在
+        if (parentId != null) {
+            categoryRepository.findById(parentId)
+                    .orElseThrow(() -> new IllegalArgumentException("父分类不存在: " + parentId));
+        }
+
         Category category = Category.builder()
                 .name(name)
                 .description(description)
                 .build();
-        return categoryRepository.save(category);
+
+        Category saved = categoryRepository.save(category);
+
+        // 初始化排序 - 根分类的 parentType 和 parentId 都为 null
+        sortOrderService.initializeCategorySortOrder(saved.getId(), parentId, sortOrder);
+
+        return saved;
     }
 
     @Transactional
