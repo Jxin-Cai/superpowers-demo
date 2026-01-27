@@ -1,1 +1,208 @@
-# superpowers-demo
+# CMS MVP - 内容管理系统
+
+一个基于 Spring Boot + Vue 3 的内容管理系统（CMS）项目。
+
+## 📋 技术栈
+
+### 后端
+- **Java 17**
+- **Spring Boot 3.2.1**
+- **Spring Data JPA**
+- **H2 Database** (开发环境)
+- **Flyway** (数据库迁移)
+- **Gradle** (构建工具)
+
+### 前端
+- **Vue 3**
+- **Vue Router 4**
+- **Element Plus**
+- **Axios**
+- **md-editor-v3** (Markdown编辑器)
+- **Vite** (构建工具)
+
+## 🚀 快速开始
+
+### 环境要求
+
+- **JDK 17+**
+- **Node.js 16+** 和 **npm**
+- **Gradle 8+** (项目已包含 Gradle Wrapper)
+
+### 安装步骤
+
+#### 1. 克隆项目
+
+```bash
+git clone <repository-url>
+cd superpowers-demo
+```
+
+#### 2. 安装前端依赖
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+**说明**：前端依赖包括：
+- Vue 3 及相关核心库
+- Element Plus UI组件库
+- md-editor-v3 Markdown编辑器
+- 其他开发依赖
+
+#### 3. 构建前端
+
+有两种方式可以构建前端：
+
+**方式一：使用构建脚本（推荐）**
+
+```bash
+./build-frontend.sh
+```
+
+这个脚本会自动执行：
+1. 进入 `frontend` 目录
+2. 安装依赖 (`npm install`)
+3. 构建前端 (`npm run build`)
+4. 清理旧的静态资源
+5. 复制构建产物到 `src/main/resources/static/`
+
+**方式二：手动构建**
+
+```bash
+# 1. 安装依赖（如果还没安装）
+cd frontend
+npm install
+
+# 2. 构建前端
+npm run build
+
+# 3. 复制构建产物到后端静态资源目录
+cd ..
+rm -rf src/main/resources/static/*
+cp -r frontend/dist/* src/main/resources/static/
+```
+
+**方式三：使用 Gradle 任务**
+
+```bash
+# Gradle 会自动安装依赖并构建前端
+./gradlew copyFrontend
+
+# 或者直接运行应用（会自动构建前端）
+./gradlew bootRun
+```
+
+### 运行应用
+
+#### 开发模式
+
+**后端**：
+```bash
+./gradlew bootRun
+```
+
+**前端开发服务器**（可选，用于前端开发）：
+```bash
+cd frontend
+npm run dev
+```
+
+访问：
+- 后端 API: http://localhost:8080
+- 前端页面: http://localhost:8080 (生产构建) 或 http://localhost:5173 (开发服务器)
+
+#### 生产构建
+
+```bash
+# 构建前端
+./build-frontend.sh
+
+# 构建后端 JAR
+./gradlew bootJar
+
+# 运行 JAR
+java -jar build/libs/cms-mvp-0.0.1-SNAPSHOT.jar
+```
+
+## 📁 项目结构
+
+```
+superpowers-demo/
+├── frontend/                 # 前端项目
+│   ├── src/
+│   │   ├── admin/           # 后台管理页面
+│   │   ├── public/          # 前台展示页面
+│   │   ├── api/             # API 接口定义
+│   │   └── router/          # 路由配置
+│   ├── package.json
+│   └── vite.config.js
+├── src/main/java/           # Java 后端代码
+│   └── com/example/cms/
+│       ├── application/     # 应用服务层
+│       ├── domain/          # 领域模型
+│       ├── infrastructure/ # 基础设施层
+│       └── presentation/   # 表现层（Controller）
+├── src/main/resources/
+│   ├── static/             # 前端构建产物（自动生成）
+│   ├── db/migration/       # Flyway 数据库迁移脚本
+│   └── application.yml     # 应用配置
+├── build-frontend.sh       # 前端构建脚本
+└── build.gradle           # Gradle 构建配置
+```
+
+## 🔧 开发说明
+
+### 前端开发
+
+1. **启动开发服务器**：
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+   访问 http://localhost:5173
+
+2. **修改代码后**：
+   - 开发服务器会自动热重载
+   - 如需更新后端静态资源，运行 `./build-frontend.sh`
+
+### 后端开发
+
+1. **运行应用**：
+   ```bash
+   ./gradlew bootRun
+   ```
+
+2. **数据库**：
+   - 使用 H2 内存数据库（开发环境）
+   - 数据库迁移由 Flyway 自动执行
+   - 访问 H2 控制台: http://localhost:8080/h2-console
+
+## 📝 常见问题
+
+### 1. 前端构建失败：找不到 md-editor-v3
+
+**问题**：`Rollup failed to resolve import "md-editor-v3"`
+
+**解决**：
+```bash
+cd frontend
+npm install
+```
+
+确保 `package.json` 中包含 `"md-editor-v3": "^4.12.0"` 依赖。
+
+### 2. 前端修改后未生效
+
+**解决**：
+1. 重新构建前端：`./build-frontend.sh`
+2. 重启后端服务
+
+### 3. 端口冲突
+
+**解决**：修改 `src/main/resources/application.yml` 中的端口配置。
+
+## 📄 许可证
+
+[添加许可证信息]
