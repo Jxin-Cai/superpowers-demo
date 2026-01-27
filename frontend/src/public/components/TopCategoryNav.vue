@@ -67,10 +67,6 @@ const goToCategory = (id) => {
   activeDropdown.value = null
 }
 
-const goToAdmin = () => {
-  router.push('/admin')
-}
-
 onMounted(loadTree)
 </script>
 
@@ -144,14 +140,5 @@ onMounted(loadTree)
 
 .dropdown-item:hover {
   background: #f5f7fa;
-}
-
-.admin-link {
-  margin-left: auto;
-  color: #409eff;
-}
-
-.admin-link:hover {
-  background: #ecf5ff;
 }
 </style>

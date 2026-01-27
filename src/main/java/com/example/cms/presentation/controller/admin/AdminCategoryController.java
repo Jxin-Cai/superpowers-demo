@@ -32,7 +32,12 @@ public class AdminCategoryController {
 
     @PostMapping
     public ApiResponse<CategoryResponse> create(@RequestBody CategoryRequest request) {
-        Category category = categoryService.create(request.getName(), request.getDescription());
+        Category category = categoryService.create(
+                request.getName(),
+                request.getDescription(),
+                request.getParentId(),
+                request.getSortOrder() != null ? request.getSortOrder() : 0
+        );
         return ApiResponse.success(CategoryResponse.from(category));
     }
 

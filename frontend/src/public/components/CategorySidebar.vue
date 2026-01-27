@@ -34,7 +34,8 @@ const treeProps = {
 const loadTree = async () => {
   try {
     const res = await publicApi.getCategoryTree()
-    treeData.value = res.data.tree || []
+    // axios 拦截器已返回 response.data，所以 res 直接是 { tree: [...] }
+    treeData.value = res.tree || []
   } catch (e) {
     console.error('加载分类树失败', e)
   }

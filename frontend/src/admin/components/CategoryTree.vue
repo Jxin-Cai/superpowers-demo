@@ -148,48 +148,25 @@ const treeDataForSelect = computed(() => {
 const load = async () => {
   try {
     const res = await categoryApi.getTree()
-    treeData.value = buildTree(res.data)
+    // 后端已经返回嵌套的树形结构 { tree: [...] }
+    treeData.value = cleanEmptyChildren(res.data.tree || [])
   } catch (e) {
+    console.error('加载分类树失败:', e)
     ElMessage.error('加载分类树失败')
   }
 }
 
-// 构建树形结构
-const buildTree = (flatData) => {
-  const map = new Map()
-  const roots = []
-
-  flatData.forEach(item => {
-    map.set(item.id, { ...item, children: [] })
-  })
-
-  flatData.forEach(item => {
-    const node = map.get(item.id)
-    if (item.parentId === null || item.parentId === undefined) {
-      roots.push(node)
+// 清理空 children 数组
+const cleanEmptyChildren = (nodes) => {
+  return nodes.map(node => {
+    const cleaned = { ...node }
+    if (cleaned.children && cleaned.children.length > 0) {
+      cleaned.children = cleanEmptyChildren(cleaned.children)
     } else {
-      const parent = map.get(item.parentId)
-      if (parent) {
-        parent.children.push(node)
-      } else {
-        roots.push(node)
-      }
+      delete cleaned.children
     }
+    return cleaned
   })
-
-  // 清理空 children
-  const cleanEmptyChildren = (nodes) => {
-    nodes.forEach(node => {
-      if (node.children && node.children.length === 0) {
-        delete node.children
-      } else if (node.children) {
-        cleanEmptyChildren(node.children)
-      }
-    })
-  }
-  cleanEmptyChildren(roots)
-
-  return roots
 }
 
 // 防止循环引用和非法拖拽

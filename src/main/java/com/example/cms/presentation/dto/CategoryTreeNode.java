@@ -17,6 +17,7 @@ public class CategoryTreeNode {
     private String name;
     private String description;
     private Integer sortOrder;
+    private Long parentId;
     @Builder.Default
     private List<CategoryTreeNode> children = new ArrayList<>();
 
@@ -26,7 +27,24 @@ public class CategoryTreeNode {
                 .name(name)
                 .description(description)
                 .sortOrder(sortOrder)
+                .parentId(null)
                 .children(new ArrayList<>())
                 .build();
+    }
+
+    public static CategoryTreeNode from(Long id, String name, String description, Integer sortOrder, Long parentId) {
+        return CategoryTreeNode.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .sortOrder(sortOrder)
+                .parentId(parentId)
+                .children(new ArrayList<>())
+                .build();
+    }
+
+    public CategoryTreeNode withParent(Long parentId) {
+        this.setParentId(parentId);
+        return this;
     }
 }
