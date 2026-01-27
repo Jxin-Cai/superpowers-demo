@@ -41,7 +41,8 @@ public class AdminArticleController {
         Article article = articleService.create(
                 request.getTitle(),
                 request.getContent(),
-                request.getCategoryId()
+                request.getCategoryId(),
+                request.getKeywords()
         );
         return ApiResponse.success(toResponse(article));
     }

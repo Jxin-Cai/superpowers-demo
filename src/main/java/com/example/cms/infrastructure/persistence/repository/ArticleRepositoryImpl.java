@@ -5,6 +5,8 @@ import com.example.cms.domain.model.article.ArticleStatus;
 import com.example.cms.domain.repository.ArticleRepository;
 import com.example.cms.infrastructure.persistence.entity.ArticleEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +66,12 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
+    public Page<Article> searchByKeyword(String keyword, Long categoryId, Pageable pageable) {
+        return springDataRepository.searchByKeyword(keyword, categoryId, pageable)
+                .map(this::toDomain);
+    }
+
+    @Override
     public void deleteById(Long id) {
         springDataRepository.deleteById(id);
     }
@@ -82,6 +90,7 @@ public class ArticleRepositoryImpl implements ArticleRepository {
                 .status(ArticleStatus.valueOf(entity.getStatus()))
                 .categoryId(entity.getCategoryId())
                 .publishedAt(entity.getPublishedAt())
+                .keywords(entity.getKeywords())
                 .audit(com.example.cms.domain.shared.Audit.of(
                         entity.getCreatedAt(),
                         entity.getUpdatedAt()
@@ -96,7 +105,8 @@ public class ArticleRepositoryImpl implements ArticleRepository {
                     article.getContent(),
                     article.getRenderedContent().getHtml(),
                     article.getStatus().name(),
-                    article.getCategoryId()
+                    article.getCategoryId(),
+                    article.getKeywords()
             );
         }
         return ArticleEntity.forUpdate(
@@ -107,7 +117,8 @@ public class ArticleRepositoryImpl implements ArticleRepository {
                 article.getStatus().name(),
                 article.getCategoryId(),
                 article.getAudit().getCreatedAt(),
-                article.getPublishedAt()
+                article.getPublishedAt(),
+                article.getKeywords()
         );
     }
 }

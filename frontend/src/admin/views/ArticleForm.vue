@@ -28,6 +28,13 @@
         />
       </el-form-item>
 
+      <el-form-item label="关键词">
+        <el-input
+          v-model="form.keywords"
+          placeholder="请输入关键词，用逗号分隔（如：Java,Spring,编程）"
+        />
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="save">{{ isEdit ? '更新' : '创建草稿' }}</el-button>
         <el-button @click="publish" v-if="!isEdit || form.status === 'DRAFT'">发布</el-button>
@@ -56,7 +63,8 @@ const form = ref({
   title: '',
   content: '',
   categoryId: null,
-  status: 'DRAFT'
+  status: 'DRAFT',
+  keywords: ''
 })
 
 const categories = ref([])
@@ -93,7 +101,7 @@ const loadCategories = async () => {
     // 加载所有分类（用于显示名称等）
     const allRes = await categoryApi.adminGetAll()
     categories.value = allRes
-    
+
     // 加载树形结构（用于选择器）
     const treeRes = await categoryApi.getTree()
     categoryTree.value = treeRes.tree || []
@@ -112,7 +120,8 @@ const load = async () => {
         title: article.title,
         content: article.content,
         categoryId: article.categoryId,
-        status: article.status
+        status: article.status,
+        keywords: article.keywords || ''
       }
     }
   } catch (e) {
@@ -137,7 +146,7 @@ const save = async () => {
 const publish = async () => {
   try {
     let articleId = id.value
-    
+
     if (isEdit.value) {
       // 编辑模式：先保存再发布
       await articleApi.update(articleId, form.value)
@@ -148,7 +157,7 @@ const publish = async () => {
       articleId = created.id
       await articleApi.publish(articleId)
     }
-    
+
     ElMessage.success('发布成功')
     router.push('/admin/articles')
   } catch (e) {

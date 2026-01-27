@@ -21,6 +21,7 @@ public class ArticleResponse {
     private LocalDateTime publishedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String keywords;
 
     public static ArticleResponse from(com.example.cms.domain.model.article.Article article, String categoryName) {
         return new ArticleResponse(
@@ -33,7 +34,8 @@ public class ArticleResponse {
                 categoryName,
                 article.getPublishedAt(),
                 article.getAudit().getCreatedAt(),
-                article.getAudit().getUpdatedAt()
+                article.getAudit().getUpdatedAt(),
+                article.getKeywords()
         );
     }
 }

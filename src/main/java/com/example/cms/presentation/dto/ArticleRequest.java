@@ -7,4 +7,5 @@ public class ArticleRequest {
     private String title;
     private String content;
     private Long categoryId;
+    private String keywords;
 }

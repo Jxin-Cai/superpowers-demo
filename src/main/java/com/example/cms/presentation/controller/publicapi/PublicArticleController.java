@@ -7,6 +7,8 @@ import com.example.cms.domain.model.category.Category;
 import com.example.cms.presentation.dto.ApiResponse;
 import com.example.cms.presentation.dto.ArticleResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +31,20 @@ public class PublicArticleController {
         return ApiResponse.success(articles.stream()
                 .map(this::toResponse)
                 .toList());
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<Page<ArticleResponse>> search(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            Pageable pageable) {
+        Page<Article> articles = articleService.search(keyword, categoryId, pageable);
+        return ApiResponse.success(articles.map(article -> {
+            String categoryName = categoryService.findById(article.getCategoryId())
+                    .map(Category::getName)
+                    .orElse("未知分类");
+            return ArticleResponse.from(article, categoryName);
+        }));
     }
 
     @GetMapping("/{id}")
