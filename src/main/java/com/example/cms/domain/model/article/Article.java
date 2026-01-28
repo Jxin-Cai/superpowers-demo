@@ -8,16 +8,17 @@ import java.time.LocalDateTime;
 
 @Getter
 public class Article {
-    private final Long id;
-    private String title;
-    private String content;
-    private RenderedContent renderedContent;
-    private ArticleStatus status;
-    @Getter(AccessLevel.NONE)
-    private Long categoryId;
-    private LocalDateTime publishedAt;
-    private String keywords;
-    private Audit audit;
+     private final Long id;
+     private String title;
+     private String content;
+     private RenderedContent renderedContent;
+     private ArticleStatus status;
+     @Getter(AccessLevel.NONE)
+     private Long categoryId;
+     private LocalDateTime publishedAt;
+     private String keywords;
+     private Long viewCount;
+     private Audit audit;
 
     private Article(Builder builder) {
         this.id = builder.id;
@@ -25,10 +26,11 @@ public class Article {
         this.content = builder.content;
         this.renderedContent = builder.renderedContent;
         this.status = builder.status;
-        this.categoryId = builder.categoryId;
-        this.publishedAt = builder.publishedAt;
-        this.keywords = builder.keywords;
-        this.audit = builder.audit;
+         this.categoryId = builder.categoryId;
+         this.publishedAt = builder.publishedAt;
+         this.keywords = builder.keywords;
+         this.viewCount = builder.viewCount;
+         this.audit = builder.audit;
     }
 
     public static Builder builder() {
@@ -59,10 +61,18 @@ public class Article {
         this.audit = this.audit.markModified();
     }
 
-    public void changeCategory(Long categoryId) {
-        this.categoryId = categoryId;
-        this.audit = this.audit.markModified();
-    }
+     public void changeCategory(Long categoryId) {
+         this.categoryId = categoryId;
+         this.audit = this.audit.markModified();
+     }
+
+     public void incrementViewCount() {
+         if (this.viewCount == null) {
+             this.viewCount = 0L;
+         }
+         this.viewCount++;
+         this.audit = this.audit.markModified();
+     }
 
     public Long getCategoryId() {
         return this.categoryId;
@@ -78,11 +88,12 @@ public class Article {
         String title;
         String content;
         RenderedContent renderedContent = RenderedContent.of("");
-        ArticleStatus status = ArticleStatus.DRAFT;
-        Long categoryId;
-        LocalDateTime publishedAt;
-        String keywords = "";
-        Audit audit = Audit.create();
+         ArticleStatus status = ArticleStatus.DRAFT;
+         Long categoryId;
+         LocalDateTime publishedAt;
+         String keywords = "";
+         Long viewCount = 0L;
+         Audit audit = Audit.create();
 
         public Builder id(Long id) {
             this.id = id;
@@ -119,10 +130,15 @@ public class Article {
             return this;
         }
 
-        public Builder keywords(String keywords) {
-            this.keywords = keywords != null ? keywords : "";
-            return this;
-        }
+         public Builder keywords(String keywords) {
+             this.keywords = keywords != null ? keywords : "";
+             return this;
+         }
+
+         public Builder viewCount(Long viewCount) {
+             this.viewCount = viewCount != null ? viewCount : 0L;
+             return this;
+         }
 
         public Builder audit(Audit audit) {
             this.audit = audit;

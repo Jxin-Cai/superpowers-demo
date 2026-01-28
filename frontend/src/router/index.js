@@ -65,6 +65,14 @@ const router = createRouter({
         {
           path: 'users',
           component: () => import('../admin/views/UserList.vue')
+        },
+        {
+          path: 'comments',
+          component: () => import('../admin/views/CommentReview.vue')
+        },
+        {
+          path: 'statistics',
+          component: () => import('../admin/views/StatisticsDashboard.vue')
         }
       ]
     }

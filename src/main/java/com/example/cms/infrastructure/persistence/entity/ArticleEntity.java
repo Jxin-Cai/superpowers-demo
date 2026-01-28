@@ -52,6 +52,9 @@ public class ArticleEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "view_count")
+    private Long viewCount;
+
     public static ArticleEntity of(String title, String content, String renderedContent,
                                     String status, Long categoryId, String keywords) {
         ArticleEntity entity = new ArticleEntity();

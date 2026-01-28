@@ -23,6 +23,14 @@
           <el-icon><User /></el-icon>
           <span>用户管理</span>
         </el-menu-item>
+        <el-menu-item index="/admin/comments">
+          <el-icon><ChatDotRound /></el-icon>
+          <span>评论审核</span>
+        </el-menu-item>
+        <el-menu-item index="/admin/statistics">
+          <el-icon><DataAnalysis /></el-icon>
+          <span>统计仪表板</span>
+        </el-menu-item>
         <el-menu-item index="/">
           <el-icon><Back /></el-icon>
           <span>返回前台</span>
@@ -38,7 +46,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Document, Folder, Back, User } from '@element-plus/icons-vue'
+import { Document, Folder, Back, User, ChatDotRound, DataAnalysis } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const activeMenu = computed(() => route.path)
